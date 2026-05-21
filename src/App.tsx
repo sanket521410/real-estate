@@ -5,11 +5,14 @@ function App() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [selectedProperty, setSelectedProperty] = useState<any>(null)
 
+  const [search, setSearch] = useState("")
+
   const properties = [
     {
       title: "Luxury Villa",
-      location: "Mumbai, India",
+      location: "Mumbai",
       price: "₹2.5 Crore",
+      type: "Villa",
       image:
         "https://images.unsplash.com/photo-1570129477492-45c003edd2be?q=80&w=2070",
       description:
@@ -18,8 +21,9 @@ function App() {
 
     {
       title: "Modern House",
-      location: "Pune, India",
+      location: "Pune",
       price: "₹1.8 Crore",
+      type: "House",
       image:
         "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2070",
       description:
@@ -28,14 +32,19 @@ function App() {
 
     {
       title: "Premium Apartment",
-      location: "Delhi, India",
+      location: "Delhi",
       price: "₹95 Lakh",
+      type: "Apartment",
       image:
         "https://images.unsplash.com/photo-1494526585095-c41746248156?q=80&w=2070",
       description:
         "Luxury apartment in prime city location."
     }
   ]
+
+  const filteredProperties = properties.filter((property) =>
+    property.location.toLowerCase().includes(search.toLowerCase())
+  )
 
   return (
     <div className="bg-gray-100 min-h-screen">
@@ -49,28 +58,15 @@ function App() {
             Dream Estate
           </h1>
 
-          {/* Desktop Menu */}
           <div className="hidden md:flex gap-8 text-lg">
 
-            <a href="#" className="hover:text-blue-600">
-              Home
-            </a>
-
-            <a href="#" className="hover:text-blue-600">
-              Properties
-            </a>
-
-            <a href="#" className="hover:text-blue-600">
-              About
-            </a>
-
-            <a href="#" className="hover:text-blue-600">
-              Contact
-            </a>
+            <a href="#">Home</a>
+            <a href="#">Properties</a>
+            <a href="#">About</a>
+            <a href="#">Contact</a>
 
           </div>
 
-          {/* Mobile Button */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="md:hidden text-3xl"
@@ -120,7 +116,9 @@ function App() {
 
             <input
               type="text"
-              placeholder="Location"
+              placeholder="Search Location"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
               className="border p-4 rounded-xl outline-none text-black"
             />
 
@@ -161,7 +159,7 @@ function App() {
 
         <div className="grid md:grid-cols-3 gap-10">
 
-          {properties.map((property, index) => (
+          {filteredProperties.map((property, index) => (
 
             <div
               key={index}
