@@ -2,6 +2,7 @@ import { useState } from "react"
 
 function App() {
 
+  const [menuOpen, setMenuOpen] = useState(false)
   const [selectedProperty, setSelectedProperty] = useState<any>(null)
 
   const properties = [
@@ -48,7 +49,41 @@ function App() {
             Dream Estate
           </h1>
 
+          {/* Desktop Menu */}
           <div className="hidden md:flex gap-8 text-lg">
+
+            <a href="#" className="hover:text-blue-600">
+              Home
+            </a>
+
+            <a href="#" className="hover:text-blue-600">
+              Properties
+            </a>
+
+            <a href="#" className="hover:text-blue-600">
+              About
+            </a>
+
+            <a href="#" className="hover:text-blue-600">
+              Contact
+            </a>
+
+          </div>
+
+          {/* Mobile Button */}
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="md:hidden text-3xl"
+          >
+            ☰
+          </button>
+
+        </div>
+
+        {/* Mobile Menu */}
+        {menuOpen && (
+
+          <div className="md:hidden bg-white px-5 pb-5 flex flex-col gap-4 text-lg">
 
             <a href="#">Home</a>
             <a href="#">Properties</a>
@@ -57,7 +92,7 @@ function App() {
 
           </div>
 
-        </div>
+        )}
 
       </nav>
 
@@ -79,6 +114,39 @@ function App() {
           <p className="mt-5 text-lg md:text-xl">
             Luxury homes and villas at best prices
           </p>
+
+          {/* Search Box */}
+          <div className="bg-white rounded-3xl p-6 grid md:grid-cols-4 gap-5 mt-10">
+
+            <input
+              type="text"
+              placeholder="Location"
+              className="border p-4 rounded-xl outline-none text-black"
+            />
+
+            <select className="border p-4 rounded-xl outline-none text-black">
+
+              <option>Property Type</option>
+              <option>Villa</option>
+              <option>Apartment</option>
+              <option>House</option>
+
+            </select>
+
+            <select className="border p-4 rounded-xl outline-none text-black">
+
+              <option>Budget</option>
+              <option>50 Lakh</option>
+              <option>1 Crore</option>
+              <option>2 Crore</option>
+
+            </select>
+
+            <button className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl p-4">
+              Search
+            </button>
+
+          </div>
 
         </div>
 
