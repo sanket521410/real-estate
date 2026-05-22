@@ -17,6 +17,13 @@ function App() {
       price: "₹90 Lakh",
       image:
         "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85"
+    },
+    {
+      title: "Beach House",
+      location: "Goa",
+      price: "₹4 Cr",
+      image:
+        "https://images.unsplash.com/photo-1512917774080-9991f1c4c750"
     }
   ])
 
@@ -90,50 +97,54 @@ function App() {
 
       </section>
 
-      {/* Add Property */}
-      <section className="form-section">
+      {/* Hidden Admin Panel */}
+      {window.location.pathname === "/admin" && (
 
-        <h2>Add Property</h2>
+        <section className="form-section">
 
-        <div className="form">
+          <h2>Add Property</h2>
 
-          <input
-            type="text"
-            placeholder="Property Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
+          <div className="form">
 
-          <input
-            type="text"
-            placeholder="Location"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-          />
+            <input
+              type="text"
+              placeholder="Property Title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
 
-          <input
-            type="text"
-            placeholder="Price"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-          />
+            <input
+              type="text"
+              placeholder="Location"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+            />
 
-          <input
-            type="text"
-            placeholder="Image URL"
-            value={image}
-            onChange={(e) => setImage(e.target.value)}
-          />
+            <input
+              type="text"
+              placeholder="Price"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+            />
 
-          <button onClick={addProperty}>
-            Add Property
-          </button>
+            <input
+              type="text"
+              placeholder="Image URL"
+              value={image}
+              onChange={(e) => setImage(e.target.value)}
+            />
 
-        </div>
+            <button onClick={addProperty}>
+              Add Property
+            </button>
 
-      </section>
+          </div>
 
-      {/* Cards */}
+        </section>
+
+      )}
+
+      {/* Property Cards */}
       <section className="cards">
 
         {filteredProperties.map((property, index) => (
