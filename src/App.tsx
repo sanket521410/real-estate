@@ -1,33 +1,20 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
+
+import {
+  collection,
+  addDoc,
+  getDocs
+} from "firebase/firestore"
+
+import { db } from "./firebase"
+
 import "./App.css"
 
 function App() {
 
   const isAdmin = window.location.href.includes("admin")
 
-  const [properties, setProperties] = useState([
-    {
-      title: "Luxury Villa",
-      location: "Mumbai",
-      price: "₹2.5 Cr",
-      image:
-        "https://images.unsplash.com/photo-1564013799919-ab600027ffc6",
-
-      description:
-        "Luxury villa with premium interior and swimming pool.",
-
-      bhk: "3 BHK",
-      floor: "12th Floor",
-      furnished: "Fully Furnished",
-      old: "2 Years",
-      parking: "Available",
-      water: "24 Hours",
-
-      railway: "2 KM",
-      hospital: "1 KM",
-      school: "500 M"
-    }
-  ])
+  const [properties, setProperties] = useState<any[]>([])
 
   const [search, setSearch] = useState("")
   const [selectedProperty, setSelectedProperty] = useState<any>(null)
@@ -49,24 +36,59 @@ function App() {
   const [hospital, setHospital] = useState("")
   const [school, setSchool] = useState("")
 
-  const addProperty = () => {
+  // Load Properties From Firebase
+
+  useEffect(() => {
+
+    const fetchProperties = async () => {
+
+      const querySnapshot = await getDocs(
+        collection(db, "properties")
+      )
+
+      const propertyList:any = []
+
+      querySnapshot.forEach((doc) => {
+
+        propertyList.push(doc.data())
+
+      })
+
+      setProperties(propertyList)
+    }
+
+    fetchProperties()
+
+  }, [])
+
+  // Add Property
+
+  const addProperty = async () => {
 
     const newProperty = {
+
       title,
       location,
       price,
       image,
       description,
+
       bhk,
       floor,
       furnished,
       old,
       parking,
       water,
+
       railway,
       hospital,
       school
     }
+
+    await addDoc(
+      collection(db, "properties"),
+      newProperty
+    )
 
     setProperties([...properties, newProperty])
 
@@ -88,14 +110,22 @@ function App() {
     setSchool("")
   }
 
+  // Search Filter
+
   const filteredProperties = properties.filter((property) =>
-    property.location.toLowerCase().includes(search.toLowerCase())
+
+    property.location
+      ?.toLowerCase()
+      .includes(search.toLowerCase())
+
   )
 
   return (
+
     <div className="app">
 
       {/* Navbar */}
+
       <nav className="navbar">
 
         <h1 className="logo">
@@ -120,6 +150,7 @@ function App() {
       </nav>
 
       {/* Hero */}
+
       <section className="hero">
 
         <div className="hero-overlay">
@@ -141,6 +172,7 @@ function App() {
       </section>
 
       {/* Admin Panel */}
+
       {isAdmin && (
 
         <section className="form-section">
@@ -259,6 +291,7 @@ function App() {
       )}
 
       {/* Property Cards */}
+
       <section className="cards">
 
         {filteredProperties.map((property, index) => (
@@ -269,15 +302,24 @@ function App() {
             onClick={() => setSelectedProperty(property)}
           >
 
-            <img src={property.image} alt="" />
+            <img
+              src={property.image}
+              alt=""
+            />
 
             <div className="card-content">
 
-              <h3>{property.title}</h3>
+              <h3>
+                {property.title}
+              </h3>
 
-              <p>{property.location}</p>
+              <p>
+                {property.location}
+              </p>
 
-              <span>{property.price}</span>
+              <span>
+                {property.price}
+              </span>
 
             </div>
 
@@ -288,6 +330,7 @@ function App() {
       </section>
 
       {/* Popup */}
+
       {selectedProperty && (
 
         <div className="popup">
@@ -325,14 +368,21 @@ function App() {
             <div className="details-grid">
 
               <div>🏠 {selectedProperty.bhk}</div>
+
               <div>🏢 {selectedProperty.floor}</div>
+
               <div>🛋️ {selectedProperty.furnished}</div>
+
               <div>📅 {selectedProperty.old}</div>
+
               <div>🚗 {selectedProperty.parking}</div>
+
               <div>💧 {selectedProperty.water}</div>
 
               <div>🚉 {selectedProperty.railway}</div>
+
               <div>🏥 {selectedProperty.hospital}</div>
+
               <div>🏫 {selectedProperty.school}</div>
 
             </div>
