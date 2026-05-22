@@ -164,7 +164,7 @@ function App() {
           </p>
 
           <h3>
-            📞 +91 9876543210
+            📞 +91 9372384660
           </h3>
 
         </div>
@@ -390,14 +390,14 @@ function App() {
             <div className="contact-buttons">
 
               <a
-                href="tel:+919876543210"
+                href="tel:+919372384660"
                 className="contact-btn"
               >
                 📞 Call
               </a>
 
               <a
-                href="https://wa.me/919876543210"
+                href="https://wa.me/917208615432"
                 target="_blank"
                 className="contact-btn"
               >
