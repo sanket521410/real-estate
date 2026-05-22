@@ -12,28 +12,20 @@ function App() {
       price: "₹2.5 Cr",
       image:
         "https://images.unsplash.com/photo-1564013799919-ab600027ffc6",
-      description:
-        "Beautiful luxury villa with swimming pool and modern interior."
-    },
 
-    {
-      title: "Modern Apartment",
-      location: "Pune",
-      price: "₹90 Lakh",
-      image:
-        "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85",
       description:
-        "Modern apartment in prime city location."
-    },
+        "Luxury villa with premium interior and swimming pool.",
 
-    {
-      title: "Beach House",
-      location: "Goa",
-      price: "₹4 Cr",
-      image:
-        "https://images.unsplash.com/photo-1512917774080-9991f1c4c750",
-      description:
-        "Luxury beach house with amazing sea view."
+      bhk: "3 BHK",
+      floor: "12th Floor",
+      furnished: "Fully Furnished",
+      old: "2 Years",
+      parking: "Available",
+      water: "24 Hours",
+
+      railway: "2 KM",
+      hospital: "1 KM",
+      school: "500 M"
     }
   ])
 
@@ -46,19 +38,34 @@ function App() {
   const [image, setImage] = useState("")
   const [description, setDescription] = useState("")
 
-  const addProperty = () => {
+  const [bhk, setBhk] = useState("")
+  const [floor, setFloor] = useState("")
+  const [furnished, setFurnished] = useState("")
+  const [old, setOld] = useState("")
+  const [parking, setParking] = useState("")
+  const [water, setWater] = useState("")
 
-    if (!title || !location || !price || !image || !description) {
-      alert("Fill all fields")
-      return
-    }
+  const [railway, setRailway] = useState("")
+  const [hospital, setHospital] = useState("")
+  const [school, setSchool] = useState("")
+
+  const addProperty = () => {
 
     const newProperty = {
       title,
       location,
       price,
       image,
-      description
+      description,
+      bhk,
+      floor,
+      furnished,
+      old,
+      parking,
+      water,
+      railway,
+      hospital,
+      school
     }
 
     setProperties([...properties, newProperty])
@@ -68,6 +75,17 @@ function App() {
     setPrice("")
     setImage("")
     setDescription("")
+
+    setBhk("")
+    setFloor("")
+    setFurnished("")
+    setOld("")
+    setParking("")
+    setWater("")
+
+    setRailway("")
+    setHospital("")
+    setSchool("")
   }
 
   const filteredProperties = properties.filter((property) =>
@@ -80,7 +98,9 @@ function App() {
       {/* Navbar */}
       <nav className="navbar">
 
-        <h1>Real Estate</h1>
+        <h1 className="logo">
+          Dream Estate
+        </h1>
 
         <div className="search-box">
 
@@ -91,7 +111,9 @@ function App() {
             onChange={(e) => setSearch(e.target.value)}
           />
 
-          <button>Search</button>
+          <button>
+            Search
+          </button>
 
         </div>
 
@@ -100,22 +122,32 @@ function App() {
       {/* Hero */}
       <section className="hero">
 
-        <h2>Find Your Dream Home</h2>
+        <div className="hero-overlay">
 
-        <p>Buy, Rent and Sell Properties Easily</p>
+          <h2>
+            Find Your Dream Home ✨
+          </h2>
 
-        <h3 style={{ marginTop: "20px" }}>
-          Contact: +91 9876543210
-        </h3>
+          <p>
+            Luxury Properties For Modern Lifestyle
+          </p>
+
+          <h3>
+            📞 +91 9876543210
+          </h3>
+
+        </div>
 
       </section>
 
-      {/* Hidden Admin Panel */}
+      {/* Admin Panel */}
       {isAdmin && (
 
         <section className="form-section">
 
-          <h2>Add Property</h2>
+          <h2>
+            Add Property
+          </h2>
 
           <div className="form">
 
@@ -148,9 +180,72 @@ function App() {
             />
 
             <textarea
-              placeholder="Property Description"
+              placeholder="Description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+            />
+
+            <input
+              type="text"
+              placeholder="BHK"
+              value={bhk}
+              onChange={(e) => setBhk(e.target.value)}
+            />
+
+            <input
+              type="text"
+              placeholder="Floor"
+              value={floor}
+              onChange={(e) => setFloor(e.target.value)}
+            />
+
+            <input
+              type="text"
+              placeholder="Furnished"
+              value={furnished}
+              onChange={(e) => setFurnished(e.target.value)}
+            />
+
+            <input
+              type="text"
+              placeholder="Property Old"
+              value={old}
+              onChange={(e) => setOld(e.target.value)}
+            />
+
+            <input
+              type="text"
+              placeholder="Parking"
+              value={parking}
+              onChange={(e) => setParking(e.target.value)}
+            />
+
+            <input
+              type="text"
+              placeholder="Water"
+              value={water}
+              onChange={(e) => setWater(e.target.value)}
+            />
+
+            <input
+              type="text"
+              placeholder="Railway Distance"
+              value={railway}
+              onChange={(e) => setRailway(e.target.value)}
+            />
+
+            <input
+              type="text"
+              placeholder="Hospital Distance"
+              value={hospital}
+              onChange={(e) => setHospital(e.target.value)}
+            />
+
+            <input
+              type="text"
+              placeholder="School Distance"
+              value={school}
+              onChange={(e) => setSchool(e.target.value)}
             />
 
             <button onClick={addProperty}>
@@ -176,11 +271,15 @@ function App() {
 
             <img src={property.image} alt="" />
 
-            <h3>{property.title}</h3>
+            <div className="card-content">
 
-            <p>{property.location}</p>
+              <h3>{property.title}</h3>
 
-            <span>{property.price}</span>
+              <p>{property.location}</p>
+
+              <span>{property.price}</span>
+
+            </div>
 
           </div>
 
@@ -199,20 +298,44 @@ function App() {
               className="close-btn"
               onClick={() => setSelectedProperty(null)}
             >
-              X
+              ✕
             </button>
 
-            <img src={selectedProperty.image} alt="" />
+            <img
+              src={selectedProperty.image}
+              alt=""
+            />
 
-            <h2>{selectedProperty.title}</h2>
+            <h2>
+              {selectedProperty.title}
+            </h2>
 
-            <p>{selectedProperty.location}</p>
+            <p>
+              {selectedProperty.location}
+            </p>
 
-            <h3>{selectedProperty.price}</h3>
+            <h3>
+              {selectedProperty.price}
+            </h3>
 
             <p className="desc">
               {selectedProperty.description}
             </p>
+
+            <div className="details-grid">
+
+              <div>🏠 {selectedProperty.bhk}</div>
+              <div>🏢 {selectedProperty.floor}</div>
+              <div>🛋️ {selectedProperty.furnished}</div>
+              <div>📅 {selectedProperty.old}</div>
+              <div>🚗 {selectedProperty.parking}</div>
+              <div>💧 {selectedProperty.water}</div>
+
+              <div>🚉 {selectedProperty.railway}</div>
+              <div>🏥 {selectedProperty.hospital}</div>
+              <div>🏫 {selectedProperty.school}</div>
+
+            </div>
 
             <div className="contact-buttons">
 
