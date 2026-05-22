@@ -3,27 +3,37 @@ import "./App.css"
 
 function App() {
 
+  const isAdmin = window.location.href.includes("admin")
+
   const [properties, setProperties] = useState([
     {
       title: "Luxury Villa",
       location: "Mumbai",
       price: "₹2.5 Cr",
       image:
-        "https://images.unsplash.com/photo-1564013799919-ab600027ffc6"
+        "https://images.unsplash.com/photo-1564013799919-ab600027ffc6",
+      description:
+        "Beautiful luxury villa with swimming pool and modern interior."
     },
+
     {
       title: "Modern Apartment",
       location: "Pune",
       price: "₹90 Lakh",
       image:
-        "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85"
+        "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85",
+      description:
+        "Modern apartment in prime city location."
     },
+
     {
       title: "Beach House",
       location: "Goa",
       price: "₹4 Cr",
       image:
-        "https://images.unsplash.com/photo-1512917774080-9991f1c4c750"
+        "https://images.unsplash.com/photo-1512917774080-9991f1c4c750",
+      description:
+        "Luxury beach house with amazing sea view."
     }
   ])
 
@@ -34,10 +44,11 @@ function App() {
   const [location, setLocation] = useState("")
   const [price, setPrice] = useState("")
   const [image, setImage] = useState("")
+  const [description, setDescription] = useState("")
 
   const addProperty = () => {
 
-    if (!title || !location || !price || !image) {
+    if (!title || !location || !price || !image || !description) {
       alert("Fill all fields")
       return
     }
@@ -46,7 +57,8 @@ function App() {
       title,
       location,
       price,
-      image
+      image,
+      description
     }
 
     setProperties([...properties, newProperty])
@@ -55,6 +67,7 @@ function App() {
     setLocation("")
     setPrice("")
     setImage("")
+    setDescription("")
   }
 
   const filteredProperties = properties.filter((property) =>
@@ -73,7 +86,7 @@ function App() {
 
           <input
             type="text"
-            placeholder="Search property..."
+            placeholder="Search city..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -98,7 +111,7 @@ function App() {
       </section>
 
       {/* Hidden Admin Panel */}
-      {window.location.pathname === "/admin" && (
+      {isAdmin && (
 
         <section className="form-section">
 
@@ -132,6 +145,12 @@ function App() {
               placeholder="Image URL"
               value={image}
               onChange={(e) => setImage(e.target.value)}
+            />
+
+            <textarea
+              placeholder="Property Description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
             />
 
             <button onClick={addProperty}>
@@ -190,6 +209,29 @@ function App() {
             <p>{selectedProperty.location}</p>
 
             <h3>{selectedProperty.price}</h3>
+
+            <p className="desc">
+              {selectedProperty.description}
+            </p>
+
+            <div className="contact-buttons">
+
+              <a
+                href="tel:+919876543210"
+                className="contact-btn"
+              >
+                📞 Call
+              </a>
+
+              <a
+                href="https://wa.me/919876543210"
+                target="_blank"
+                className="contact-btn"
+              >
+                💬 WhatsApp
+              </a>
+
+            </div>
 
           </div>
 
