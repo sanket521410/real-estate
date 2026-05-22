@@ -46,80 +46,24 @@ function App() {
       {/* Navbar */}
       <nav className="navbar">
 
-        <h1>Real Estate</h1>
+  <h1>Real Estate</h1>
 
-      </nav>
+  <div className="search-box">
+    <input type="text" placeholder="Search property..." />
+    <button>Search</button>
+  </div>
+
+</nav>
 
       {/* Hero */}
       <section className="hero">
+        <h3 style={{marginTop:"20px"}}>
+  Contact: +91 9372384660
+</h3>
 
         <h2>Find Your Dream Home</h2>
 
         <p>Buy, Rent and Sell Properties Easily</p>
-
-      </section>
-
-      {/* Add Property Form */}
-      <section className="form-section">
-
-        <h2>Add Property</h2>
-
-        <div className="form">
-
-          <input
-            type="text"
-            placeholder="Property Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-
-          <input
-            type="text"
-            placeholder="Location"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-          />
-
-          <input
-            type="text"
-            placeholder="Price"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-          />
-
-          <input
-            type="text"
-            placeholder="Image URL"
-            value={image}
-            onChange={(e) => setImage(e.target.value)}
-          />
-
-          <button onClick={addProperty}>
-            Add Property
-          </button>
-
-        </div>
-
-      </section>
-
-      {/* Cards */}
-      <section className="cards">
-
-        {properties.map((property, index) => (
-
-          <div className="card" key={index}>
-
-            <img src={property.image} alt="" />
-
-            <h3>{property.title}</h3>
-
-            <p>{property.location}</p>
-
-            <span>{property.price}</span>
-
-          </div>
-
-        ))}
 
       </section>
 
