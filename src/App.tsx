@@ -19,11 +19,17 @@ function App() {
   const [search, setSearch] = useState("")
   const [selectedProperty, setSelectedProperty] = useState<any>(null)
 
+  const [currentImage, setCurrentImage] = useState(0)
+
   const [title, setTitle] = useState("")
   const [location, setLocation] = useState("")
   const [price, setPrice] = useState("")
-  const [image, setImage] = useState("")
   const [description, setDescription] = useState("")
+
+  const [image1, setImage1] = useState("")
+  const [image2, setImage2] = useState("")
+  const [image3, setImage3] = useState("")
+  const [image4, setImage4] = useState("")
 
   const [bhk, setBhk] = useState("")
   const [floor, setFloor] = useState("")
@@ -36,7 +42,7 @@ function App() {
   const [hospital, setHospital] = useState("")
   const [school, setSchool] = useState("")
 
-  // Load Properties
+  // LOAD DATA
 
   useEffect(() => {
 
@@ -61,7 +67,7 @@ function App() {
 
   }, [])
 
-  // Add Property
+  // ADD PROPERTY
 
   const addProperty = async () => {
 
@@ -70,8 +76,14 @@ function App() {
       title,
       location,
       price,
-      image,
       description,
+
+      images: [
+        image1,
+        image2,
+        image3,
+        image4
+      ],
 
       bhk,
       floor,
@@ -92,11 +104,17 @@ function App() {
 
     setProperties([...properties, newProperty])
 
+    alert("Property Added 🔥")
+
     setTitle("")
     setLocation("")
     setPrice("")
-    setImage("")
     setDescription("")
+
+    setImage1("")
+    setImage2("")
+    setImage3("")
+    setImage4("")
 
     setBhk("")
     setFloor("")
@@ -110,7 +128,7 @@ function App() {
     setSchool("")
   }
 
-  // Search Filter
+  // SEARCH
 
   const filteredProperties = properties.filter((property) =>
 
@@ -141,10 +159,6 @@ function App() {
             onChange={(e) => setSearch(e.target.value)}
           />
 
-          <button>
-            Search
-          </button>
-
         </div>
 
       </nav>
@@ -171,7 +185,7 @@ function App() {
 
       </section>
 
-      {/* Admin Panel */}
+      {/* Admin */}
 
       {isAdmin && (
 
@@ -204,17 +218,38 @@ function App() {
               onChange={(e) => setPrice(e.target.value)}
             />
 
-            <input
-              type="text"
-              placeholder="Image URL"
-              value={image}
-              onChange={(e) => setImage(e.target.value)}
-            />
-
             <textarea
               placeholder="Description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+            />
+
+            <input
+              type="text"
+              placeholder="Image URL 1"
+              value={image1}
+              onChange={(e) => setImage1(e.target.value)}
+            />
+
+            <input
+              type="text"
+              placeholder="Image URL 2"
+              value={image2}
+              onChange={(e) => setImage2(e.target.value)}
+            />
+
+            <input
+              type="text"
+              placeholder="Image URL 3"
+              value={image3}
+              onChange={(e) => setImage3(e.target.value)}
+            />
+
+            <input
+              type="text"
+              placeholder="Image URL 4"
+              value={image4}
+              onChange={(e) => setImage4(e.target.value)}
             />
 
             <input
@@ -290,7 +325,7 @@ function App() {
 
       )}
 
-      {/* Property Cards */}
+      {/* Cards */}
 
       <section className="cards">
 
@@ -299,11 +334,14 @@ function App() {
           <div
             className="card"
             key={index}
-            onClick={() => setSelectedProperty(property)}
+            onClick={() => {
+              setSelectedProperty(property)
+              setCurrentImage(0)
+            }}
           >
 
             <img
-              src={property.image}
+              src={property.images?.[0]}
               alt=""
             />
 
@@ -344,10 +382,43 @@ function App() {
               ✕
             </button>
 
-            <img
-              src={selectedProperty.image}
-              alt=""
-            />
+            {/* IMAGE SLIDER */}
+
+            <div className="slider">
+
+              <button
+                className="slider-btn"
+                onClick={() =>
+                  setCurrentImage(
+                    currentImage === 0
+                      ? selectedProperty.images.length - 1
+                      : currentImage - 1
+                  )
+                }
+              >
+                ⬅
+              </button>
+
+              <img
+                src={selectedProperty.images[currentImage]}
+                alt=""
+                className="slider-image"
+              />
+
+              <button
+                className="slider-btn"
+                onClick={() =>
+                  setCurrentImage(
+                    currentImage === selectedProperty.images.length - 1
+                      ? 0
+                      : currentImage + 1
+                  )
+                }
+              >
+                ➡
+              </button>
+
+            </div>
 
             <h2>
               {selectedProperty.title}
@@ -368,21 +439,13 @@ function App() {
             <div className="details-grid">
 
               <div>🏠 {selectedProperty.bhk}</div>
-
               <div>🏢 {selectedProperty.floor}</div>
-
               <div>🛋️ {selectedProperty.furnished}</div>
-
               <div>📅 {selectedProperty.old}</div>
-
               <div>🚗 {selectedProperty.parking}</div>
-
               <div>💧 {selectedProperty.water}</div>
-
               <div>🚉 {selectedProperty.railway}</div>
-
               <div>🏥 {selectedProperty.hospital}</div>
-
               <div>🏫 {selectedProperty.school}</div>
 
             </div>
@@ -397,7 +460,7 @@ function App() {
               </a>
 
               <a
-                href={`https://wa.me/917208615432?text=Hello%20I%20am%20interested%20in%20this%20property%20🏠%0A%0AProperty:%20${selectedProperty.title}%0ALocation:%20${selectedProperty.location}%0APrice:%20${selectedProperty.price}%0ABHK:%20${selectedProperty.bhk}%0AFloor:%20${selectedProperty.floor}`}
+                href={`https://wa.me/917208615432?text=Hello%20I%20am%20interested%20in%20this%20property%20🏠%0A%0AProperty:%20${selectedProperty.title}%0ALocation:%20${selectedProperty.location}%0APrice:%20${selectedProperty.price}`}
                 target="_blank"
                 className="contact-btn"
               >
