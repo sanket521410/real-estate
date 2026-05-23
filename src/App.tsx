@@ -395,14 +395,17 @@ function App() {
               >
                 📞 Call
               </a>
+href={`https://wa.me/919876543210?text=
+Hello%20I%20am%20interested%20in%20this%20property%20🏠
 
-              <a
-                href="https://wa.me/917208615432"
-                target="_blank"
-                className="contact-btn"
-              >
-                💬 WhatsApp
-              </a>
+Property:%20${selectedProperty.title}
+
+Location:%20${selectedProperty.location}
+
+Price:%20${selectedProperty.price}
+
+BHK:%20${selectedProperty.bhk}
+`}
 
             </div>
 
