@@ -36,7 +36,7 @@ function App() {
   const [hospital, setHospital] = useState("")
   const [school, setSchool] = useState("")
 
-  // Load Properties From Firebase
+  // Load Properties
 
   useEffect(() => {
 
@@ -395,17 +395,14 @@ function App() {
               >
                 📞 Call
               </a>
-href={`https://wa.me/919876543210?text=
-Hello%20I%20am%20interested%20in%20this%20property%20🏠
 
-Property:%20${selectedProperty.title}
-
-Location:%20${selectedProperty.location}
-
-Price:%20${selectedProperty.price}
-
-BHK:%20${selectedProperty.bhk}
-`}
+              <a
+                href={`https://wa.me/917208615432?text=Hello%20I%20am%20interested%20in%20this%20property%20🏠%0A%0AProperty:%20${selectedProperty.title}%0ALocation:%20${selectedProperty.location}%0APrice:%20${selectedProperty.price}%0ABHK:%20${selectedProperty.bhk}%0AFloor:%20${selectedProperty.floor}`}
+                target="_blank"
+                className="contact-btn"
+              >
+                💬 WhatsApp
+              </a>
 
             </div>
 
