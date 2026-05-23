@@ -521,3 +521,19 @@ body{
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
 }
+.no-result{
+  width:100%;
+  text-align:center;
+  padding:80px 20px;
+  color:white;
+}
+
+.no-result h2{
+  font-size:40px;
+}
+
+.no-result p{
+  margin-top:10px;
+  font-size:18px;
+  opacity:0.8;
+}

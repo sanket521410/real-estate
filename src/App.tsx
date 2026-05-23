@@ -126,6 +126,12 @@ function App() {
       ?.toLowerCase()
       .includes(search.toLowerCase())
 
+    ||
+
+    property.title
+      ?.toLowerCase()
+      .includes(search.toLowerCase())
+
   )
 
   return (
@@ -328,40 +334,58 @@ function App() {
 
       <section className="cards">
 
-        {filteredProperties.map((property, index) => (
+        {filteredProperties.length > 0 ? (
 
-          <div
-            className="card"
-            key={index}
-            onClick={() =>
-              setSelectedProperty(property)
-            }
-          >
+          filteredProperties.map((property, index) => (
 
-            <img
-              src={property.image}
-              alt=""
-            />
+            <div
+              className="card"
+              key={index}
+              onClick={() =>
+                setSelectedProperty(property)
+              }
+            >
 
-            <div className="card-content">
+              <img
+                src={property.image}
+                alt=""
+              />
 
-              <h3>
-                {property.title}
-              </h3>
+              <div className="card-content">
 
-              <p>
-                {property.location}
-              </p>
+                <h3>
+                  {property.title}
+                </h3>
 
-              <span>
-                {property.price}
-              </span>
+                <p>
+                  📍 {property.location}
+                </p>
+
+                <span>
+                  {property.price}
+                </span>
+
+              </div>
 
             </div>
 
+          ))
+
+        ) : (
+
+          <div className="no-result">
+
+            <h2>
+              😢 No Property Found
+            </h2>
+
+            <p>
+              Try Another City
+            </p>
+
           </div>
 
-        ))}
+        )}
 
       </section>
 
