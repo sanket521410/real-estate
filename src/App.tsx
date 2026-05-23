@@ -6,33 +6,27 @@ import {
   getDocs
 } from "firebase/firestore"
 
-import {
-  ref,
-  uploadBytes,
-  getDownloadURL
-} from "firebase/storage"
-
-import { db, storage } from "./firebase"
+import { db } from "./firebase"
 
 import "./App.css"
 
 function App() {
 
-  const isAdmin = window.location.href.includes("admin")
+  const isAdmin =
+    window.location.href.includes("admin")
 
   const [properties, setProperties] = useState<any[]>([])
 
-  const [search, setSearch] = useState("")
-  const [selectedProperty, setSelectedProperty] = useState<any>(null)
+  const [selectedProperty, setSelectedProperty] =
+    useState<any>(null)
 
-  const [currentImage, setCurrentImage] = useState(0)
+  const [search, setSearch] = useState("")
 
   const [title, setTitle] = useState("")
   const [location, setLocation] = useState("")
   const [price, setPrice] = useState("")
   const [description, setDescription] = useState("")
-
-  const [images, setImages] = useState<any[]>([])
+  const [image, setImage] = useState("")
 
   const [bhk, setBhk] = useState("")
   const [floor, setFloor] = useState("")
@@ -45,7 +39,7 @@ function App() {
   const [hospital, setHospital] = useState("")
   const [school, setSchool] = useState("")
 
-  // LOAD DATA
+  // LOAD FIREBASE DATA
 
   useEffect(() => {
 
@@ -85,31 +79,13 @@ function App() {
 
     try {
 
-      const uploadedImages:any = []
-
-      for (const file of images) {
-
-        const storageRef = ref(
-          storage,
-          `properties/${Date.now()}-${file.name}`
-        )
-
-        await uploadBytes(storageRef, file)
-
-        const downloadURL =
-          await getDownloadURL(storageRef)
-
-        uploadedImages.push(downloadURL)
-      }
-
       const newProperty = {
 
         title,
         location,
         price,
         description,
-
-        images: uploadedImages,
+        image,
 
         bhk,
         floor,
@@ -128,27 +104,7 @@ function App() {
         newProperty
       )
 
-      setProperties([...properties, newProperty])
-
       alert("Property Added 🔥")
-
-      setTitle("")
-      setLocation("")
-      setPrice("")
-      setDescription("")
-
-      setImages([])
-
-      setBhk("")
-      setFloor("")
-      setFurnished("")
-      setOld("")
-      setParking("")
-      setWater("")
-
-      setRailway("")
-      setHospital("")
-      setSchool("")
 
       window.location.reload()
 
@@ -156,7 +112,7 @@ function App() {
 
       console.log(error)
 
-      alert("Upload Failed ❌")
+      alert("Failed ❌")
 
     }
 
@@ -176,7 +132,7 @@ function App() {
 
     <div className="app">
 
-      {/* Navbar */}
+      {/* NAVBAR */}
 
       <nav className="navbar">
 
@@ -188,16 +144,18 @@ function App() {
 
           <input
             type="text"
-            placeholder="Search city..."
+            placeholder="Search City..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) =>
+              setSearch(e.target.value)
+            }
           />
 
         </div>
 
       </nav>
 
-      {/* Hero */}
+      {/* HERO */}
 
       <section className="hero">
 
@@ -219,7 +177,7 @@ function App() {
 
       </section>
 
-      {/* Admin */}
+      {/* ADMIN PANEL */}
 
       {isAdmin && (
 
@@ -235,34 +193,43 @@ function App() {
               type="text"
               placeholder="Property Title"
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e) =>
+                setTitle(e.target.value)
+              }
             />
 
             <input
               type="text"
               placeholder="Location"
               value={location}
-              onChange={(e) => setLocation(e.target.value)}
+              onChange={(e) =>
+                setLocation(e.target.value)
+              }
             />
 
             <input
               type="text"
               placeholder="Price"
               value={price}
-              onChange={(e) => setPrice(e.target.value)}
+              onChange={(e) =>
+                setPrice(e.target.value)
+              }
+            />
+
+            <input
+              type="text"
+              placeholder="Image URL"
+              value={image}
+              onChange={(e) =>
+                setImage(e.target.value)
+              }
             />
 
             <textarea
               placeholder="Description"
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-
-            <input
-              type="file"
-              multiple
-              onChange={(e:any) =>
-                setImages([...e.target.files])
+              onChange={(e) =>
+                setDescription(e.target.value)
               }
             />
 
@@ -270,63 +237,81 @@ function App() {
               type="text"
               placeholder="BHK"
               value={bhk}
-              onChange={(e) => setBhk(e.target.value)}
+              onChange={(e) =>
+                setBhk(e.target.value)
+              }
             />
 
             <input
               type="text"
               placeholder="Floor"
               value={floor}
-              onChange={(e) => setFloor(e.target.value)}
+              onChange={(e) =>
+                setFloor(e.target.value)
+              }
             />
 
             <input
               type="text"
               placeholder="Furnished"
               value={furnished}
-              onChange={(e) => setFurnished(e.target.value)}
+              onChange={(e) =>
+                setFurnished(e.target.value)
+              }
             />
 
             <input
               type="text"
               placeholder="Property Old"
               value={old}
-              onChange={(e) => setOld(e.target.value)}
+              onChange={(e) =>
+                setOld(e.target.value)
+              }
             />
 
             <input
               type="text"
               placeholder="Parking"
               value={parking}
-              onChange={(e) => setParking(e.target.value)}
+              onChange={(e) =>
+                setParking(e.target.value)
+              }
             />
 
             <input
               type="text"
               placeholder="Water"
               value={water}
-              onChange={(e) => setWater(e.target.value)}
+              onChange={(e) =>
+                setWater(e.target.value)
+              }
             />
 
             <input
               type="text"
               placeholder="Railway Distance"
               value={railway}
-              onChange={(e) => setRailway(e.target.value)}
+              onChange={(e) =>
+                setRailway(e.target.value)
+              }
             />
 
             <input
               type="text"
               placeholder="Hospital Distance"
               value={hospital}
-              onChange={(e) => setHospital(e.target.value)}
+              onChange={(e) =>
+                setHospital(e.target.value)
+              }
             />
 
             <input
               type="text"
               placeholder="School Distance"
               value={school}
-              onChange={(e) => setSchool(e.target.value)}
+              onChange={(e) =>
+                setSchool(e.target.value)
+              }
             />
 
             <button onClick={addProperty}>
@@ -339,7 +324,7 @@ function App() {
 
       )}
 
-      {/* Cards */}
+      {/* PROPERTY SECTION */}
 
       <section className="cards">
 
@@ -348,14 +333,13 @@ function App() {
           <div
             className="card"
             key={index}
-            onClick={() => {
+            onClick={() =>
               setSelectedProperty(property)
-              setCurrentImage(0)
-            }}
+            }
           >
 
             <img
-              src={property.images?.[0]}
+              src={property.image}
               alt=""
             />
 
@@ -381,7 +365,7 @@ function App() {
 
       </section>
 
-      {/* Popup */}
+      {/* POPUP */}
 
       {selectedProperty && (
 
@@ -391,48 +375,18 @@ function App() {
 
             <button
               className="close-btn"
-              onClick={() => setSelectedProperty(null)}
+              onClick={() =>
+                setSelectedProperty(null)
+              }
             >
               ✕
             </button>
 
-            {/* IMAGE SLIDER */}
-
-            <div className="slider">
-
-              <button
-                className="slider-btn"
-                onClick={() =>
-                  setCurrentImage(
-                    currentImage === 0
-                      ? selectedProperty.images.length - 1
-                      : currentImage - 1
-                  )
-                }
-              >
-                ⬅
-              </button>
-
-              <img
-                src={selectedProperty.images[currentImage]}
-                alt=""
-                className="slider-image"
-              />
-
-              <button
-                className="slider-btn"
-                onClick={() =>
-                  setCurrentImage(
-                    currentImage === selectedProperty.images.length - 1
-                      ? 0
-                      : currentImage + 1
-                  )
-                }
-              >
-                ➡
-              </button>
-
-            </div>
+            <img
+              src={selectedProperty.image}
+              alt=""
+              className="slider-image"
+            />
 
             <h2>
               {selectedProperty.title}
@@ -453,13 +407,21 @@ function App() {
             <div className="details-grid">
 
               <div>🏠 {selectedProperty.bhk}</div>
+
               <div>🏢 {selectedProperty.floor}</div>
+
               <div>🛋️ {selectedProperty.furnished}</div>
+
               <div>📅 {selectedProperty.old}</div>
+
               <div>🚗 {selectedProperty.parking}</div>
+
               <div>💧 {selectedProperty.water}</div>
+
               <div>🚉 {selectedProperty.railway}</div>
+
               <div>🏥 {selectedProperty.hospital}</div>
+
               <div>🏫 {selectedProperty.school}</div>
 
             </div>
@@ -474,7 +436,7 @@ function App() {
               </a>
 
               <a
-                href={`https://wa.me/917208615432?text=Hello%20I%20am%20interested%20in%20this%20property%20🏠%0A%0AProperty:%20${selectedProperty.title}%0ALocation:%20${selectedProperty.location}%0APrice:%20${selectedProperty.price}%0ABHK:%20${selectedProperty.bhk}%0AFloor:%20${selectedProperty.floor}`}
+                href={`https://wa.me/917208615432?text=Hello%20I%20am%20interested%20in%20this%20property%20🏠%0A%0AProperty:%20${selectedProperty.title}%0ALocation:%20${selectedProperty.location}%0APrice:%20${selectedProperty.price}`}
                 target="_blank"
                 className="contact-btn"
               >
