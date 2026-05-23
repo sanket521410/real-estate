@@ -51,19 +51,28 @@ function App() {
 
     const fetchProperties = async () => {
 
-      const querySnapshot = await getDocs(
-        collection(db, "properties")
-      )
+      try {
 
-      const propertyList:any = []
+        const querySnapshot = await getDocs(
+          collection(db, "properties")
+        )
 
-      querySnapshot.forEach((doc) => {
+        const propertyList:any = []
 
-        propertyList.push(doc.data())
+        querySnapshot.forEach((doc) => {
 
-      })
+          propertyList.push(doc.data())
 
-      setProperties(propertyList)
+        })
+
+        setProperties(propertyList)
+
+      } catch (error) {
+
+        console.log(error)
+
+      }
+
     }
 
     fetchProperties()
@@ -74,70 +83,83 @@ function App() {
 
   const addProperty = async () => {
 
-    const uploadedImages:any = []
+    try {
 
-    for (const file of images) {
+      const uploadedImages:any = []
 
-      const storageRef = ref(
-        storage,
-        `properties/${Date.now()}-${file.name}`
+      for (const file of images) {
+
+        const storageRef = ref(
+          storage,
+          `properties/${Date.now()}-${file.name}`
+        )
+
+        await uploadBytes(storageRef, file)
+
+        const downloadURL =
+          await getDownloadURL(storageRef)
+
+        uploadedImages.push(downloadURL)
+      }
+
+      const newProperty = {
+
+        title,
+        location,
+        price,
+        description,
+
+        images: uploadedImages,
+
+        bhk,
+        floor,
+        furnished,
+        old,
+        parking,
+        water,
+
+        railway,
+        hospital,
+        school
+      }
+
+      await addDoc(
+        collection(db, "properties"),
+        newProperty
       )
 
-      await uploadBytes(storageRef, file)
+      setProperties([...properties, newProperty])
 
-      const downloadURL =
-        await getDownloadURL(storageRef)
+      alert("Property Added 🔥")
 
-      uploadedImages.push(downloadURL)
+      setTitle("")
+      setLocation("")
+      setPrice("")
+      setDescription("")
+
+      setImages([])
+
+      setBhk("")
+      setFloor("")
+      setFurnished("")
+      setOld("")
+      setParking("")
+      setWater("")
+
+      setRailway("")
+      setHospital("")
+      setSchool("")
+
+      window.location.reload()
+
+    } catch (error) {
+
+      console.log(error)
+
+      alert("Upload Failed ❌")
+
     }
 
-    const newProperty = {
-
-      title,
-      location,
-      price,
-      description,
-
-      images: uploadedImages,
-
-      bhk,
-      floor,
-      furnished,
-      old,
-      parking,
-      water,
-
-      railway,
-      hospital,
-      school
-    }
-
-    await addDoc(
-      collection(db, "properties"),
-      newProperty
-    )
-
-    setProperties([...properties, newProperty])
-
-    alert("Property Added 🔥")
-
-    setTitle("")
-    setLocation("")
-    setPrice("")
-    setDescription("")
-
-    setImages([])
-
-    setBhk("")
-    setFloor("")
-    setFurnished("")
-    setOld("")
-    setParking("")
-    setWater("")
-
-    setRailway("")
-    setHospital("")
-    setSchool("")
   }
 
   // SEARCH
@@ -452,7 +474,7 @@ function App() {
               </a>
 
               <a
-                href={`https://wa.me/917208615432?text=Hello%20I%20am%20interested%20in%20this%20property%20🏠%0A%0AProperty:%20${selectedProperty.title}%0ALocation:%20${selectedProperty.location}%0APrice:%20${selectedProperty.price}`}
+                href={`https://wa.me/917208615432?text=Hello%20I%20am%20interested%20in%20this%20property%20🏠%0A%0AProperty:%20${selectedProperty.title}%0ALocation:%20${selectedProperty.location}%0APrice:%20${selectedProperty.price}%0ABHK:%20${selectedProperty.bhk}%0AFloor:%20${selectedProperty.floor}`}
                 target="_blank"
                 className="contact-btn"
               >
