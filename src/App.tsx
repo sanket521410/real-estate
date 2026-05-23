@@ -6,7 +6,13 @@ import {
   getDocs
 } from "firebase/firestore"
 
-import { db } from "./firebase"
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL
+} from "firebase/storage"
+
+import { db, storage } from "./firebase"
 
 import "./App.css"
 
@@ -26,10 +32,7 @@ function App() {
   const [price, setPrice] = useState("")
   const [description, setDescription] = useState("")
 
-  const [image1, setImage1] = useState("")
-  const [image2, setImage2] = useState("")
-  const [image3, setImage3] = useState("")
-  const [image4, setImage4] = useState("")
+  const [images, setImages] = useState<any[]>([])
 
   const [bhk, setBhk] = useState("")
   const [floor, setFloor] = useState("")
@@ -71,6 +74,23 @@ function App() {
 
   const addProperty = async () => {
 
+    const uploadedImages:any = []
+
+    for (const file of images) {
+
+      const storageRef = ref(
+        storage,
+        `properties/${Date.now()}-${file.name}`
+      )
+
+      await uploadBytes(storageRef, file)
+
+      const downloadURL =
+        await getDownloadURL(storageRef)
+
+      uploadedImages.push(downloadURL)
+    }
+
     const newProperty = {
 
       title,
@@ -78,12 +98,7 @@ function App() {
       price,
       description,
 
-      images: [
-        image1,
-        image2,
-        image3,
-        image4
-      ],
+      images: uploadedImages,
 
       bhk,
       floor,
@@ -111,10 +126,7 @@ function App() {
     setPrice("")
     setDescription("")
 
-    setImage1("")
-    setImage2("")
-    setImage3("")
-    setImage4("")
+    setImages([])
 
     setBhk("")
     setFloor("")
@@ -225,31 +237,11 @@ function App() {
             />
 
             <input
-              type="text"
-              placeholder="Image URL 1"
-              value={image1}
-              onChange={(e) => setImage1(e.target.value)}
-            />
-
-            <input
-              type="text"
-              placeholder="Image URL 2"
-              value={image2}
-              onChange={(e) => setImage2(e.target.value)}
-            />
-
-            <input
-              type="text"
-              placeholder="Image URL 3"
-              value={image3}
-              onChange={(e) => setImage3(e.target.value)}
-            />
-
-            <input
-              type="text"
-              placeholder="Image URL 4"
-              value={image4}
-              onChange={(e) => setImage4(e.target.value)}
+              type="file"
+              multiple
+              onChange={(e:any) =>
+                setImages([...e.target.files])
+              }
             />
 
             <input
