@@ -3,9 +3,7 @@ import { useState, useEffect } from "react"
 import {
   collection,
   addDoc,
-  getDocs,
-  deleteDoc,
-  doc
+  getDocs
 } from "firebase/firestore"
 
 import { db } from "./firebase"
@@ -17,31 +15,29 @@ function App() {
   const isAdmin =
     window.location.href.includes("admin")
 
-  const [properties, setProperties] = useState<any[]>([])
+  const [properties, setProperties] =
+    useState<any[]>([])
 
   const [selectedProperty, setSelectedProperty] =
     useState<any>(null)
 
   const [search, setSearch] = useState("")
-  const [loading, setLoading] = useState(true)
+  const [currentImage, setCurrentImage] = useState(0)
 
-  const [currentImage, setCurrentImage] =
-    useState(0)
-
-  const [filter, setFilter] =
-    useState("All")
-
-  // FORM
+  // FORM STATES
 
   const [title, setTitle] = useState("")
   const [location, setLocation] = useState("")
   const [price, setPrice] = useState("")
-  const [description, setDescription] =
-    useState("")
+  const [description, setDescription] = useState("")
+  const [type, setType] = useState("")
 
-  const [image, setImage] = useState("")
+  const [image1, setImage1] = useState("")
+  const [image2, setImage2] = useState("")
+  const [image3, setImage3] = useState("")
+  const [image4, setImage4] = useState("")
 
-  const [type, setType] = useState("Flat")
+  const [video, setVideo] = useState("")
 
   const [bhk, setBhk] = useState("")
   const [floor, setFloor] = useState("")
@@ -54,38 +50,26 @@ function App() {
   const [hospital, setHospital] = useState("")
   const [school, setSchool] = useState("")
 
-  // LOAD DATA
+  // LOAD FIREBASE
 
   useEffect(() => {
 
     const fetchProperties = async () => {
 
-      try {
+      const querySnapshot = await getDocs(
+        collection(db, "properties")
+      )
 
-        const querySnapshot = await getDocs(
-          collection(db, "properties")
-        )
+      const propertyList:any = []
 
-        const propertyList:any = []
+      querySnapshot.forEach((doc) => {
 
-        querySnapshot.forEach((docSnap) => {
+        propertyList.push(doc.data())
 
-          propertyList.push({
-            id: docSnap.id,
-            ...docSnap.data()
-          })
+      })
 
-        })
+      setProperties(propertyList)
 
-        setProperties(propertyList)
-
-      } catch (error) {
-
-        console.log(error)
-
-      }
-
-      setLoading(false)
     }
 
     fetchProperties()
@@ -102,8 +86,16 @@ function App() {
       location,
       price,
       description,
-      image,
       type,
+
+      images: [
+        image1,
+        image2,
+        image3,
+        image4
+      ],
+
+      video,
 
       bhk,
       floor,
@@ -117,92 +109,27 @@ function App() {
       school
     }
 
-    try {
+    await addDoc(
+      collection(db, "properties"),
+      newProperty
+    )
 
-      const docRef = await addDoc(
-        collection(db, "properties"),
-        newProperty
-      )
+    alert("Property Added 🔥")
 
-      setProperties([
-        ...properties,
-        {
-          id: docRef.id,
-          ...newProperty
-        }
-      ])
-
-      alert("Property Added 🔥")
-
-      setTitle("")
-      setLocation("")
-      setPrice("")
-      setDescription("")
-      setImage("")
-      setType("Flat")
-
-      setBhk("")
-      setFloor("")
-      setFurnished("")
-      setOld("")
-      setParking("")
-      setWater("")
-
-      setRailway("")
-      setHospital("")
-      setSchool("")
-
-    } catch (error) {
-
-      console.log(error)
-
-      alert("Failed ❌")
-    }
-
-  }
-
-  // DELETE
-
-  const deleteProperty = async (id:any) => {
-
-    try {
-
-      await deleteDoc(
-        doc(db, "properties", id)
-      )
-
-      setProperties(
-        properties.filter((item) =>
-          item.id !== id
-        )
-      )
-
-      setSelectedProperty(null)
-
-    } catch (error) {
-
-      console.log(error)
-    }
+    window.location.reload()
 
   }
 
   // FILTER
 
   const filteredProperties =
-    properties.filter((property) => {
+    properties.filter((property) =>
 
-      const matchSearch =
-        property.location
-          ?.toLowerCase()
-          .includes(search.toLowerCase())
+      property.location
+        ?.toLowerCase()
+        .includes(search.toLowerCase())
 
-      const matchType =
-        filter === "All"
-          ? true
-          : property.type === filter
-
-      return matchSearch && matchType
-    })
+    )
 
   return (
 
@@ -213,7 +140,7 @@ function App() {
       <nav className="navbar">
 
         <h1 className="logo">
-          Dream Estate ✨
+          Dream Estate
         </h1>
 
         <div className="search-box">
@@ -238,11 +165,11 @@ function App() {
         <div className="hero-overlay">
 
           <h2>
-            Find Your Dream Home
+            Find Your Dream Home ✨
           </h2>
 
           <p>
-            Luxury • Modern • Gen Z
+            Luxury Properties For Modern Lifestyle
           </p>
 
           <h3>
@@ -252,28 +179,6 @@ function App() {
         </div>
 
       </section>
-
-      {/* FILTERS */}
-
-      <div className="filters">
-
-        <button onClick={() => setFilter("All")}>
-          All
-        </button>
-
-        <button onClick={() => setFilter("Flat")}>
-          Flat
-        </button>
-
-        <button onClick={() => setFilter("Villa")}>
-          Villa
-        </button>
-
-        <button onClick={() => setFilter("Office")}>
-          Office
-        </button>
-
-      </div>
 
       {/* ADMIN */}
 
@@ -289,7 +194,7 @@ function App() {
 
             <input
               type="text"
-              placeholder="Title"
+              placeholder="Property Title"
               value={title}
               onChange={(e) =>
                 setTitle(e.target.value)
@@ -316,10 +221,10 @@ function App() {
 
             <input
               type="text"
-              placeholder="Image URL"
-              value={image}
+              placeholder="Property Type"
+              value={type}
               onChange={(e) =>
-                setImage(e.target.value)
+                setType(e.target.value)
               }
             />
 
@@ -331,26 +236,50 @@ function App() {
               }
             />
 
-            <select
-              value={type}
+            <input
+              type="text"
+              placeholder="Image URL 1"
+              value={image1}
               onChange={(e) =>
-                setType(e.target.value)
+                setImage1(e.target.value)
               }
-            >
+            />
 
-              <option>
-                Flat
-              </option>
+            <input
+              type="text"
+              placeholder="Image URL 2"
+              value={image2}
+              onChange={(e) =>
+                setImage2(e.target.value)
+              }
+            />
 
-              <option>
-                Villa
-              </option>
+            <input
+              type="text"
+              placeholder="Image URL 3"
+              value={image3}
+              onChange={(e) =>
+                setImage3(e.target.value)
+              }
+            />
 
-              <option>
-                Office
-              </option>
+            <input
+              type="text"
+              placeholder="Image URL 4"
+              value={image4}
+              onChange={(e) =>
+                setImage4(e.target.value)
+              }
+            />
 
-            </select>
+            <input
+              type="text"
+              placeholder="Video Tour URL"
+              value={video}
+              onChange={(e) =>
+                setVideo(e.target.value)
+              }
+            />
 
             <input
               type="text"
@@ -408,7 +337,7 @@ function App() {
 
             <input
               type="text"
-              placeholder="Railway"
+              placeholder="Railway Distance"
               value={railway}
               onChange={(e) =>
                 setRailway(e.target.value)
@@ -417,7 +346,7 @@ function App() {
 
             <input
               type="text"
-              placeholder="Hospital"
+              placeholder="Hospital Distance"
               value={hospital}
               onChange={(e) =>
                 setHospital(e.target.value)
@@ -426,7 +355,7 @@ function App() {
 
             <input
               type="text"
-              placeholder="School"
+              placeholder="School Distance"
               value={school}
               onChange={(e) =>
                 setSchool(e.target.value)
@@ -434,7 +363,7 @@ function App() {
             />
 
             <button onClick={addProperty}>
-              Add Property 🚀
+              Add Property
             </button>
 
           </div>
@@ -443,61 +372,51 @@ function App() {
 
       )}
 
-      {/* LOADING */}
+      {/* PROPERTY */}
 
-      {loading ? (
+      <section className="cards">
 
-        <h2 className="loading">
-          Loading...
-        </h2>
+        {filteredProperties.map((property, index) => (
 
-      ) : (
+          <div
+            className="card"
+            key={index}
+            onClick={() => {
+              setSelectedProperty(property)
+              setCurrentImage(0)
+            }}
+          >
 
-        <section className="cards">
+            <img
+              src={property.images?.[0]}
+              alt=""
+            />
 
-          {filteredProperties.map((property, index) => (
+            <div className="card-content">
 
-            <div
-              className="card"
-              key={index}
-              onClick={() => {
-                setSelectedProperty(property)
-                setCurrentImage(0)
-              }}
-            >
+              <h3>
+                {property.title}
+              </h3>
 
-              <div className="wishlist">
-                ❤️
-              </div>
+              <p>
+                📍 {property.location}
+              </p>
 
-              <img
-                src={property.image}
-                alt=""
-              />
+              <span>
+                {property.price}
+              </span>
 
-              <div className="card-content">
-
-                <h3>
-                  {property.title}
-                </h3>
-
-                <p>
-                  {property.location}
-                </p>
-
-                <span>
-                  {property.price}
-                </span>
-
-              </div>
+              <small>
+                {property.type}
+              </small>
 
             </div>
 
-          ))}
+          </div>
 
-        </section>
+        ))}
 
-      )}
+      </section>
 
       {/* POPUP */}
 
@@ -516,17 +435,44 @@ function App() {
               ✕
             </button>
 
-            <img
-              src={selectedProperty.image}
-              alt=""
-              className="slider-image"
-            />
+            {/* IMAGE SLIDER */}
 
-            <div className="dots">
+            <div className="slider">
 
-              <span className="active-dot"></span>
-              <span></span>
-              <span></span>
+              <button
+                className="slider-btn"
+                onClick={() =>
+                  setCurrentImage(
+                    currentImage === 0
+                      ? selectedProperty.images.length - 1
+                      : currentImage - 1
+                  )
+                }
+              >
+                ⬅
+              </button>
+
+              <img
+                src={
+                  selectedProperty.images[currentImage]
+                }
+                alt=""
+                className="slider-image"
+              />
+
+              <button
+                className="slider-btn"
+                onClick={() =>
+                  setCurrentImage(
+                    currentImage ===
+                    selectedProperty.images.length - 1
+                      ? 0
+                      : currentImage + 1
+                  )
+                }
+              >
+                ➡
+              </button>
 
             </div>
 
@@ -535,7 +481,7 @@ function App() {
             </h2>
 
             <p>
-              {selectedProperty.location}
+              📍 {selectedProperty.location}
             </p>
 
             <h3>
@@ -560,6 +506,30 @@ function App() {
 
             </div>
 
+            {/* VIDEO */}
+
+            {selectedProperty.video && (
+
+              <video
+                controls
+                className="video-tour"
+              >
+                <source
+                  src={selectedProperty.video}
+                />
+              </video>
+
+            )}
+
+            {/* MAP */}
+
+            <iframe
+              className="map"
+              src={`https://maps.google.com/maps?q=${selectedProperty.location}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
+            />
+
+            {/* CONTACT */}
+
             <div className="contact-buttons">
 
               <a
@@ -578,21 +548,6 @@ function App() {
               </a>
 
             </div>
-
-            {isAdmin && (
-
-              <button
-                className="delete-btn"
-                onClick={() =>
-                  deleteProperty(
-                    selectedProperty.id
-                  )
-                }
-              >
-                Delete Property
-              </button>
-
-            )}
 
           </div>
 
