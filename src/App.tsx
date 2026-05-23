@@ -50,25 +50,33 @@ function App() {
   const [hospital, setHospital] = useState("")
   const [school, setSchool] = useState("")
 
-  // LOAD FIREBASE
+  // LOAD FIREBASE DATA
 
   useEffect(() => {
 
     const fetchProperties = async () => {
 
-      const querySnapshot = await getDocs(
-        collection(db, "properties")
-      )
+      try {
 
-      const propertyList:any = []
+        const querySnapshot = await getDocs(
+          collection(db, "properties")
+        )
 
-      querySnapshot.forEach((doc) => {
+        const propertyList:any = []
 
-        propertyList.push(doc.data())
+        querySnapshot.forEach((doc) => {
 
-      })
+          propertyList.push(doc.data())
 
-      setProperties(propertyList)
+        })
+
+        setProperties(propertyList)
+
+      } catch (error) {
+
+        console.log(error)
+
+      }
 
     }
 
@@ -80,47 +88,57 @@ function App() {
 
   const addProperty = async () => {
 
-    const newProperty = {
+    try {
 
-      title,
-      location,
-      price,
-      description,
-      type,
+      const newProperty = {
 
-      images: [
-        image1,
-        image2,
-        image3,
-        image4
-      ],
+        title,
+        location,
+        price,
+        description,
+        type,
 
-      video,
+        images: [
+          image1,
+          image2,
+          image3,
+          image4
+        ],
 
-      bhk,
-      floor,
-      furnished,
-      old,
-      parking,
-      water,
+        video,
 
-      railway,
-      hospital,
-      school
+        bhk,
+        floor,
+        furnished,
+        old,
+        parking,
+        water,
+
+        railway,
+        hospital,
+        school
+      }
+
+      await addDoc(
+        collection(db, "properties"),
+        newProperty
+      )
+
+      alert("Property Added 🔥")
+
+      window.location.reload()
+
+    } catch (error) {
+
+      console.log(error)
+
+      alert("Failed ❌")
+
     }
-
-    await addDoc(
-      collection(db, "properties"),
-      newProperty
-    )
-
-    alert("Property Added 🔥")
-
-    window.location.reload()
 
   }
 
-  // FILTER
+  // SEARCH
 
   const filteredProperties =
     properties.filter((property) =>
@@ -180,7 +198,7 @@ function App() {
 
       </section>
 
-      {/* ADMIN */}
+      {/* ADMIN PANEL */}
 
       {isAdmin && (
 
@@ -372,7 +390,7 @@ function App() {
 
       )}
 
-      {/* PROPERTY */}
+      {/* PROPERTY SECTION */}
 
       <section className="cards">
 
@@ -388,7 +406,10 @@ function App() {
           >
 
             <img
-              src={property.images?.[0]}
+              src={
+                property.images?.[0]
+                || property.image
+              }
               alt=""
             />
 
@@ -443,9 +464,16 @@ function App() {
                 className="slider-btn"
                 onClick={() =>
                   setCurrentImage(
+
                     currentImage === 0
-                      ? selectedProperty.images.length - 1
-                      : currentImage - 1
+                    ? (
+                        (
+                          selectedProperty.images?.length
+                          || 1
+                        ) - 1
+                      )
+                    : currentImage - 1
+
                   )
                 }
               >
@@ -454,7 +482,10 @@ function App() {
 
               <img
                 src={
-                  selectedProperty.images[currentImage]
+                  selectedProperty.images?.[
+                    currentImage
+                  ]
+                  || selectedProperty.image
                 }
                 alt=""
                 className="slider-image"
@@ -464,10 +495,18 @@ function App() {
                 className="slider-btn"
                 onClick={() =>
                   setCurrentImage(
+
                     currentImage ===
-                    selectedProperty.images.length - 1
-                      ? 0
-                      : currentImage + 1
+                    (
+                      (
+                        selectedProperty.images?.length
+                        || 1
+                      ) - 1
+                    )
+
+                    ? 0
+                    : currentImage + 1
+
                   )
                 }
               >
@@ -494,15 +533,41 @@ function App() {
 
             <div className="details-grid">
 
-              <div>🏠 {selectedProperty.bhk}</div>
-              <div>🏢 {selectedProperty.floor}</div>
-              <div>🛋️ {selectedProperty.furnished}</div>
-              <div>📅 {selectedProperty.old}</div>
-              <div>🚗 {selectedProperty.parking}</div>
-              <div>💧 {selectedProperty.water}</div>
-              <div>🚉 {selectedProperty.railway}</div>
-              <div>🏥 {selectedProperty.hospital}</div>
-              <div>🏫 {selectedProperty.school}</div>
+              <div>
+                🏠 {selectedProperty.bhk}
+              </div>
+
+              <div>
+                🏢 {selectedProperty.floor}
+              </div>
+
+              <div>
+                🛋️ {selectedProperty.furnished}
+              </div>
+
+              <div>
+                📅 {selectedProperty.old}
+              </div>
+
+              <div>
+                🚗 {selectedProperty.parking}
+              </div>
+
+              <div>
+                💧 {selectedProperty.water}
+              </div>
+
+              <div>
+                🚉 {selectedProperty.railway}
+              </div>
+
+              <div>
+                🏥 {selectedProperty.hospital}
+              </div>
+
+              <div>
+                🏫 {selectedProperty.school}
+              </div>
 
             </div>
 
@@ -514,9 +579,11 @@ function App() {
                 controls
                 className="video-tour"
               >
+
                 <source
                   src={selectedProperty.video}
                 />
+
               </video>
 
             )}
@@ -556,6 +623,7 @@ function App() {
       )}
 
     </div>
+
   )
 }
 
