@@ -3,7 +3,9 @@ import { useState, useEffect } from "react"
 import {
   collection,
   addDoc,
-  getDocs
+  getDocs,
+  deleteDoc,
+  doc
 } from "firebase/firestore"
 
 import { db } from "./firebase"
@@ -21,12 +23,25 @@ function App() {
     useState<any>(null)
 
   const [search, setSearch] = useState("")
+  const [loading, setLoading] = useState(true)
+
+  const [currentImage, setCurrentImage] =
+    useState(0)
+
+  const [filter, setFilter] =
+    useState("All")
+
+  // FORM
 
   const [title, setTitle] = useState("")
   const [location, setLocation] = useState("")
   const [price, setPrice] = useState("")
-  const [description, setDescription] = useState("")
+  const [description, setDescription] =
+    useState("")
+
   const [image, setImage] = useState("")
+
+  const [type, setType] = useState("Flat")
 
   const [bhk, setBhk] = useState("")
   const [floor, setFloor] = useState("")
@@ -39,7 +54,7 @@ function App() {
   const [hospital, setHospital] = useState("")
   const [school, setSchool] = useState("")
 
-  // LOAD FIREBASE DATA
+  // LOAD DATA
 
   useEffect(() => {
 
@@ -53,9 +68,12 @@ function App() {
 
         const propertyList:any = []
 
-        querySnapshot.forEach((doc) => {
+        querySnapshot.forEach((docSnap) => {
 
-          propertyList.push(doc.data())
+          propertyList.push({
+            id: docSnap.id,
+            ...docSnap.data()
+          })
 
         })
 
@@ -67,6 +85,7 @@ function App() {
 
       }
 
+      setLoading(false)
     }
 
     fetchProperties()
@@ -77,62 +96,113 @@ function App() {
 
   const addProperty = async () => {
 
+    const newProperty = {
+
+      title,
+      location,
+      price,
+      description,
+      image,
+      type,
+
+      bhk,
+      floor,
+      furnished,
+      old,
+      parking,
+      water,
+
+      railway,
+      hospital,
+      school
+    }
+
     try {
 
-      const newProperty = {
-
-        title,
-        location,
-        price,
-        description,
-        image,
-
-        bhk,
-        floor,
-        furnished,
-        old,
-        parking,
-        water,
-
-        railway,
-        hospital,
-        school
-      }
-
-      await addDoc(
+      const docRef = await addDoc(
         collection(db, "properties"),
         newProperty
       )
 
+      setProperties([
+        ...properties,
+        {
+          id: docRef.id,
+          ...newProperty
+        }
+      ])
+
       alert("Property Added 🔥")
 
-      window.location.reload()
+      setTitle("")
+      setLocation("")
+      setPrice("")
+      setDescription("")
+      setImage("")
+      setType("Flat")
+
+      setBhk("")
+      setFloor("")
+      setFurnished("")
+      setOld("")
+      setParking("")
+      setWater("")
+
+      setRailway("")
+      setHospital("")
+      setSchool("")
 
     } catch (error) {
 
       console.log(error)
 
       alert("Failed ❌")
-
     }
 
   }
 
-  // SEARCH
+  // DELETE
 
-  const filteredProperties = properties.filter((property) =>
+  const deleteProperty = async (id:any) => {
 
-    property.location
-      ?.toLowerCase()
-      .includes(search.toLowerCase())
+    try {
 
-    ||
+      await deleteDoc(
+        doc(db, "properties", id)
+      )
 
-    property.title
-      ?.toLowerCase()
-      .includes(search.toLowerCase())
+      setProperties(
+        properties.filter((item) =>
+          item.id !== id
+        )
+      )
 
-  )
+      setSelectedProperty(null)
+
+    } catch (error) {
+
+      console.log(error)
+    }
+
+  }
+
+  // FILTER
+
+  const filteredProperties =
+    properties.filter((property) => {
+
+      const matchSearch =
+        property.location
+          ?.toLowerCase()
+          .includes(search.toLowerCase())
+
+      const matchType =
+        filter === "All"
+          ? true
+          : property.type === filter
+
+      return matchSearch && matchType
+    })
 
   return (
 
@@ -143,7 +213,7 @@ function App() {
       <nav className="navbar">
 
         <h1 className="logo">
-          Dream Estate
+          Dream Estate ✨
         </h1>
 
         <div className="search-box">
@@ -168,11 +238,11 @@ function App() {
         <div className="hero-overlay">
 
           <h2>
-            Find Your Dream Home ✨
+            Find Your Dream Home
           </h2>
 
           <p>
-            Luxury Properties For Modern Lifestyle
+            Luxury • Modern • Gen Z
           </p>
 
           <h3>
@@ -183,7 +253,29 @@ function App() {
 
       </section>
 
-      {/* ADMIN PANEL */}
+      {/* FILTERS */}
+
+      <div className="filters">
+
+        <button onClick={() => setFilter("All")}>
+          All
+        </button>
+
+        <button onClick={() => setFilter("Flat")}>
+          Flat
+        </button>
+
+        <button onClick={() => setFilter("Villa")}>
+          Villa
+        </button>
+
+        <button onClick={() => setFilter("Office")}>
+          Office
+        </button>
+
+      </div>
+
+      {/* ADMIN */}
 
       {isAdmin && (
 
@@ -197,7 +289,7 @@ function App() {
 
             <input
               type="text"
-              placeholder="Property Title"
+              placeholder="Title"
               value={title}
               onChange={(e) =>
                 setTitle(e.target.value)
@@ -238,6 +330,27 @@ function App() {
                 setDescription(e.target.value)
               }
             />
+
+            <select
+              value={type}
+              onChange={(e) =>
+                setType(e.target.value)
+              }
+            >
+
+              <option>
+                Flat
+              </option>
+
+              <option>
+                Villa
+              </option>
+
+              <option>
+                Office
+              </option>
+
+            </select>
 
             <input
               type="text"
@@ -295,7 +408,7 @@ function App() {
 
             <input
               type="text"
-              placeholder="Railway Distance"
+              placeholder="Railway"
               value={railway}
               onChange={(e) =>
                 setRailway(e.target.value)
@@ -304,7 +417,7 @@ function App() {
 
             <input
               type="text"
-              placeholder="Hospital Distance"
+              placeholder="Hospital"
               value={hospital}
               onChange={(e) =>
                 setHospital(e.target.value)
@@ -313,7 +426,7 @@ function App() {
 
             <input
               type="text"
-              placeholder="School Distance"
+              placeholder="School"
               value={school}
               onChange={(e) =>
                 setSchool(e.target.value)
@@ -321,7 +434,7 @@ function App() {
             />
 
             <button onClick={addProperty}>
-              Add Property
+              Add Property 🚀
             </button>
 
           </div>
@@ -330,21 +443,32 @@ function App() {
 
       )}
 
-      {/* PROPERTY SECTION */}
+      {/* LOADING */}
 
-      <section className="cards">
+      {loading ? (
 
-        {filteredProperties.length > 0 ? (
+        <h2 className="loading">
+          Loading...
+        </h2>
 
-          filteredProperties.map((property, index) => (
+      ) : (
+
+        <section className="cards">
+
+          {filteredProperties.map((property, index) => (
 
             <div
               className="card"
               key={index}
-              onClick={() =>
+              onClick={() => {
                 setSelectedProperty(property)
-              }
+                setCurrentImage(0)
+              }}
             >
+
+              <div className="wishlist">
+                ❤️
+              </div>
 
               <img
                 src={property.image}
@@ -358,7 +482,7 @@ function App() {
                 </h3>
 
                 <p>
-                  📍 {property.location}
+                  {property.location}
                 </p>
 
                 <span>
@@ -369,25 +493,11 @@ function App() {
 
             </div>
 
-          ))
+          ))}
 
-        ) : (
+        </section>
 
-          <div className="no-result">
-
-            <h2>
-              😢 No Property Found
-            </h2>
-
-            <p>
-              Try Another City
-            </p>
-
-          </div>
-
-        )}
-
-      </section>
+      )}
 
       {/* POPUP */}
 
@@ -412,6 +522,14 @@ function App() {
               className="slider-image"
             />
 
+            <div className="dots">
+
+              <span className="active-dot"></span>
+              <span></span>
+              <span></span>
+
+            </div>
+
             <h2>
               {selectedProperty.title}
             </h2>
@@ -431,21 +549,13 @@ function App() {
             <div className="details-grid">
 
               <div>🏠 {selectedProperty.bhk}</div>
-
               <div>🏢 {selectedProperty.floor}</div>
-
               <div>🛋️ {selectedProperty.furnished}</div>
-
               <div>📅 {selectedProperty.old}</div>
-
               <div>🚗 {selectedProperty.parking}</div>
-
               <div>💧 {selectedProperty.water}</div>
-
               <div>🚉 {selectedProperty.railway}</div>
-
               <div>🏥 {selectedProperty.hospital}</div>
-
               <div>🏫 {selectedProperty.school}</div>
 
             </div>
@@ -468,6 +578,21 @@ function App() {
               </a>
 
             </div>
+
+            {isAdmin && (
+
+              <button
+                className="delete-btn"
+                onClick={() =>
+                  deleteProperty(
+                    selectedProperty.id
+                  )
+                }
+              >
+                Delete Property
+              </button>
+
+            )}
 
           </div>
 
